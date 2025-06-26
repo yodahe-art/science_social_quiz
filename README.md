@@ -5,12 +5,11 @@ QESEM EXAM PREP is an interactive educational website designed to help Grade 12 
 ## Features
 
 *   **Section-based Learning**: Choose between Natural Science and Social Science streams.
-*   **Subject & Unit Organization**: Navigate through subjects (Physics, Chemistry, History, etc.) and their respective units.
+*   **Hierarchical Navigation**: Navigate through Sections → Subjects (e.g., Physics, Chemistry) → Grades (Grade 9-12) → Units.
 *   **Multiple Choice Questions (MCQs)**: Each unit contains a set of MCQs with 4 options.
 *   **Instant Feedback**: After submitting an answer, the correct answer and a detailed explanation are shown.
 *   **Sticky Navigation Bar**: Easy navigation with a persistent header.
-*   **Back Button**: Navigate to previous levels (Unit → Subject → Section → Home).
-*   **Search Functionality**: Filter subjects or units within the current view.
+*   **Back Button**: Navigate to previous levels (Question → Unit → Grade → Subject → Section → Home).
 *   **Progress Tracker**: Saves your scores for completed units and displays overall progress (uses `localStorage`).
 *   **Light/Dark Mode Toggle**: Switch between light and dark themes for comfortable viewing (preference saved in `localStorage`).
 *   **Responsive Design**: Adapts to various screen sizes for use on desktop and mobile devices.
@@ -57,13 +56,12 @@ QESEM EXAM PREP is an interactive educational website designed to help Grade 12 
 
 ## Development Notes
 
-*   **Question Data**: All questions are stored in `data/questions.js`. To add more questions, subjects, or units, edit this file following the existing structure.
+*   **Question Data**: All questions are stored in `data/questions.js`. The structure is Section → Subject → Grade → Unit → Questions. To add more content, edit this file following this hierarchical structure.
 *   **Styling**: All styles are in `style.css`. Theme variables for light/dark mode are defined at the top of this file.
 *   **Logic**: All application logic is in `script.js`.
 
 ## Future Enhancements (Potential)
 
-*   More sophisticated global search (e.g., search questions directly by keyword).
 *   User accounts and server-side progress saving (would require backend).
 *   More diverse question types.
 *   Admin panel for managing questions.

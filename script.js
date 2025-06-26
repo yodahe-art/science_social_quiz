@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pages = {
         landing: document.getElementById('landing-page'),
         section: document.getElementById('section-page'),
-        subject: document.getElementById('subject-page'),
+        subject: document.getElementById('subject-page'), // This will now list Grades
+        grade: document.getElementById('grade-page'),     // New page to list Units for a Grade
         question: document.getElementById('question-page'),
         review: document.getElementById('review-page'),
         progress: document.getElementById('progress-tracker'),
@@ -19,9 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Content display elements
     const sectionTitle = document.getElementById('section-title');
     const subjectListContainer = document.getElementById('subject-list');
-    const subjectTitle = document.getElementById('subject-title');
-    const unitListContainer = document.getElementById('unit-list');
-    const unitTitle = document.getElementById('unit-title'); // For question page header
+
+    const subjectPageTitle = document.getElementById('subject-page-title'); // Title for page listing grades
+    const gradeListContainer = document.getElementById('grade-list'); // Container for grades on subject page
+
+    const gradePageTitle = document.getElementById('grade-page-title'); // Title for page listing units
+    const unitListContainerForGrade = document.getElementById('unit-list-for-grade'); // Container for units on grade page
+
+    const unitTitle = document.getElementById('unit-title'); // For question page header (now includes grade)
     const questionContainer = document.getElementById('question-container');
     const explanationContainer = document.getElementById('explanation-container');
     const explanationText = document.getElementById('explanation-text');
@@ -33,14 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const reviewAnswersButton = document.getElementById('review-answers');
     const bookmarkQuestionButton = document.getElementById('bookmark-question');
 
-    // Search
-    const searchBar = document.getElementById('search-bar');
-
     // State variables
     let currentPage = 'landing';
     let historyStack = []; // To manage back button functionality
     let currentSection = null; // 'natural' or 'social'
     let currentSubject = null; // e.g., 'Physics'
+    let currentGrade = null; // e.g., 'Grade 9'
     let currentUnit = null; // e.g., 'Unit 1'
     let currentQuestionIndex = 0;
     let questionsForUnit = [];
@@ -82,12 +86,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pageId === 'section') {
             currentSection = context.sectionType;
             loadSubjects(context.sectionType);
-        } else if (pageId === 'subject') {
+        } else if (pageId === 'subject') { // This page now lists grades for the subject
+            currentSection = context.sectionType; // Ensure section is maintained
             currentSubject = context.subjectName;
-            loadUnits(currentSection, context.subjectName);
+            loadGradesForSubject(currentSection, currentSubject);
+        } else if (pageId === 'grade') { // This new page lists units for the grade
+            currentSection = context.sectionType;
+            currentSubject = context.subjectName;
+            currentGrade = context.gradeName;
+            loadUnitsForGrade(currentSection, currentSubject, currentGrade);
         } else if (pageId === 'question') {
+            currentSection = context.sectionType;
+            currentSubject = context.subjectName;
+            currentGrade = context.gradeName;
             currentUnit = context.unitName;
-            loadQuestions(currentSection, currentSubject, context.unitName);
+            loadQuestions(currentSection, currentSubject, currentGrade, context.unitName, context.targetQuestionId);
         }
     }
 
@@ -95,8 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
         switch(currentPage) {
             case 'landing': return {};
             case 'section': return { sectionType: currentSection };
-            case 'subject': return { subjectName: currentSubject, sectionType: currentSection }; // sectionType is needed to go back to correct subject list
-            case 'question': return { unitName: currentUnit, subjectName: currentSubject, sectionType: currentSection };
+            case 'subject': return { sectionType: currentSection, subjectName: currentSubject };
+            case 'grade': return { sectionType: currentSection, subjectName: currentSubject, gradeName: currentGrade };
+            case 'question': return { sectionType: currentSection, subjectName: currentSubject, gradeName: currentGrade, unitName: currentUnit };
             default: return {};
         }
     }
@@ -114,13 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (previous.context) {
                 currentSection = previous.context.sectionType;
                 currentSubject = previous.context.subjectName;
+                currentGrade = previous.context.gradeName;
                 currentUnit = previous.context.unitName;
 
                 // Reload data if necessary, e.g., if going back to a list page
                 if (currentPage === 'section' && currentSection) {
                     loadSubjects(currentSection);
                 } else if (currentPage === 'subject' && currentSection && currentSubject) {
-                    loadUnits(currentSection, currentSubject);
+                    loadGradesForSubject(currentSection, currentSubject); // Changed from loadUnits
+                } else if (currentPage === 'grade' && currentSection && currentSubject && currentGrade) {
+                    loadUnitsForGrade(currentSection, currentSubject, currentGrade);
                 }
             }
             updateBackButtonState();
@@ -183,24 +200,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function loadUnits(section, subjectName) {
-        subjectTitle.textContent = subjectName;
-        unitListContainer.innerHTML = ''; // Clear previous units
+    // Renamed from loadUnits - this now loads Grades for a given Subject
+    function loadGradesForSubject(section, subjectName) {
+        if (!subjectPageTitle || !gradeListContainer) {
+            console.error("Subject page elements (title or grade list container) not found.");
+            return;
+        }
+        subjectPageTitle.textContent = `${subjectName} - Select Grade`;
+        gradeListContainer.innerHTML = '';
 
-        // Ensure examData and specific path is loaded
-        if (!window.examData ||
-            !window.examData[section] ||
-            !window.examData[section].subjects ||
-            !window.examData[section].subjects[subjectName] ||
-            !window.examData[section].subjects[subjectName].units) {
-            console.error(`Data for units in "${subjectName}" under "${section}" not found.`);
-            unitListContainer.innerHTML = '<p>Error: Unit data could not be loaded.</p>';
+        if (!window.examData?.[section]?.subjects?.[subjectName]?.grades) {
+            console.error(`Data for grades in "${subjectName}" under "${section}" not found.`);
+            gradeListContainer.innerHTML = '<p>Error: Grade data could not be loaded.</p>';
             return;
         }
 
-        const units = window.examData[section].subjects[subjectName].units;
+        const grades = window.examData[section].subjects[subjectName].grades;
+        if (Object.keys(grades).length === 0) {
+            gradeListContainer.innerHTML = '<p>No grades available for this subject yet.</p>';
+            return;
+        }
+
+        for (const gradeName in grades) {
+            const gradeItem = document.createElement('div');
+            gradeItem.classList.add('list-item');
+            gradeItem.textContent = gradeName;
+            gradeItem.dataset.gradeName = gradeName;
+            gradeItem.addEventListener('click', () => {
+                navigateTo('grade', { sectionType: section, subjectName: subjectName, gradeName: gradeName });
+            });
+            gradeListContainer.appendChild(gradeItem);
+        }
+    }
+
+    // New function to load Units for a given Grade
+    function loadUnitsForGrade(section, subjectName, gradeName) {
+        if (!gradePageTitle || !unitListContainerForGrade) {
+            console.error("Grade page elements (title or unit list container) not found for units.");
+            return;
+        }
+        gradePageTitle.textContent = `${subjectName} - ${gradeName} - Select Unit`;
+        unitListContainerForGrade.innerHTML = '';
+
+        if (!window.examData?.[section]?.subjects?.[subjectName]?.grades?.[gradeName]?.units) {
+            console.error(`Data for units in "${gradeName}" of "${subjectName}" under "${section}" not found.`);
+            unitListContainerForGrade.innerHTML = '<p>Error: Unit data for this grade could not be loaded.</p>';
+            return;
+        }
+
+        const units = window.examData[section].subjects[subjectName].grades[gradeName].units;
         if (Object.keys(units).length === 0) {
-            unitListContainer.innerHTML = '<p>No units available for this subject yet.</p>';
+            unitListContainerForGrade.innerHTML = '<p>No units available for this grade yet.</p>';
             return;
         }
 
@@ -208,29 +258,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const unitItem = document.createElement('div');
             unitItem.classList.add('list-item');
             unitItem.textContent = unitName;
-            unitItem.dataset.unitName = unitName; // Store for event listener
+            unitItem.dataset.unitName = unitName;
             unitItem.addEventListener('click', () => {
-                // Pass section, subject, and unit name for context
-                navigateTo('question', { sectionType: section, subjectName: subjectName, unitName: unitName });
+                navigateTo('question', { sectionType: section, subjectName: subjectName, gradeName: gradeName, unitName: unitName });
             });
-            unitListContainer.appendChild(unitItem);
+            unitListContainerForGrade.appendChild(unitItem);
         }
     }
 
-    // Placeholder for loading questions - will be implemented in next step
-    function loadQuestions(section, subject, unit) {
-        console.log(`Loading questions for: ${unit} of ${subject} (${section})`);
-        unitTitle.textContent = `${subject} - ${unit}`; // Set the header on the question page
+    // Modified loadQuestions to include grade
+    function loadQuestions(section, subject, grade, unit, targetQuestionId = null) { // Added targetQuestionId from bookmark jump
+        console.log(`Loading questions for: ${unit} of ${grade}, ${subject} (${section})`);
+        unitTitle.textContent = `${subject} - ${grade} - ${unit}`;
 
         currentQuestionIndex = 0;
         userAnswers = [];
         score = 0;
 
-        // Actual question loading logic will go here
-        // For now, just a placeholder
-        if (window.examData && window.examData[section] && window.examData[section].subjects[subject] && window.examData[section].subjects[subject].units[unit]) {
-            questionsForUnit = window.examData[section].subjects[subject].units[unit];
+        if (window.examData?.[section]?.subjects?.[subject]?.grades?.[grade]?.units?.[unit]) {
+            questionsForUnit = window.examData[section].subjects[subject].grades[grade].units[unit];
             if (questionsForUnit && questionsForUnit.length > 0) {
+                if (targetQuestionId) { // Handle jumping to a specific question
+                    const targetIdx = questionsForUnit.findIndex(q => q.id === targetQuestionId);
+                    if (targetIdx !== -1) currentQuestionIndex = targetIdx;
+                }
                 displayQuestion(currentQuestionIndex);
                 startTimer(questionsForUnit.length); // Start timer here
                 submitAnswerButton.style.display = 'inline-block';
@@ -451,11 +502,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (reviewAnswersButton) {
         reviewAnswersButton.addEventListener('click', () => {
+            if (!currentUnit || !currentSubject || !currentSection || !currentGrade) {
+                console.error("Cannot enter review mode: current context is incomplete.");
+                return;
+            }
             navigateTo('review', {
                 unitName: currentUnit,
                 subjectName: currentSubject,
                 sectionType: currentSection,
-                answers: userAnswers // Pass the answers for review
+                gradeName: currentGrade, // Pass currentGrade
+                answers: userAnswers
             });
         });
     }
@@ -464,13 +520,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Review Mode ---
     function displayReview(context) {
         const reviewContent = document.getElementById('review-content');
-        if (!reviewContent || !context || !context.answers) {
-            reviewContent.innerHTML = '<p>No review data available or error loading review.</p>';
+        if (!reviewContent || !context || !context.answers || !context.gradeName) { // Check for gradeName
+            reviewContent.innerHTML = '<p>No review data available or error loading review (missing context).</p>';
             return;
         }
 
         const answersToReview = context.answers;
-        let reviewHTML = `<h2>Review: ${context.subjectName} - ${context.unitName}</h2>`;
+        // Update heading to include grade
+        let reviewHTML = `<h2>Review: ${context.subjectName} - ${context.gradeName} - ${context.unitName}</h2>`;
 
         if (answersToReview.length === 0) {
             reviewHTML += '<p>No questions were answered in this attempt.</p>';
@@ -515,7 +572,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Bookmark Functionality ---
     function updateBookmarkButtonState(questionId) {
-        if (bookmarkedQuestions.some(bq => bq.id === questionId && bq.section === currentSection && bq.subject === currentSubject && bq.unit === currentUnit)) {
+        if (!currentSection || !currentSubject || !currentGrade || !currentUnit) return; // Ensure context is valid
+        const isBookmarked = bookmarkedQuestions.some(bq =>
+            bq.id === questionId &&
+            bq.section === currentSection &&
+            bq.subject === currentSubject &&
+            bq.grade === currentGrade && // Add grade to check
+            bq.unit === currentUnit
+        );
+
+        if (isBookmarked) {
             bookmarkQuestionButton.textContent = 'Unbookmark Question';
             bookmarkQuestionButton.classList.add('bookmarked');
         } else {
@@ -525,10 +591,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleBookmark() {
-        if (!questionsForUnit || !questionsForUnit[currentQuestionIndex]) return;
+        if (!questionsForUnit || !questionsForUnit[currentQuestionIndex] || !currentSection || !currentSubject || !currentGrade || !currentUnit) return;
 
         const question = questionsForUnit[currentQuestionIndex];
-        const bookmarkIndex = bookmarkedQuestions.findIndex(bq => bq.id === question.id && bq.section === currentSection && bq.subject === currentSubject && bq.unit === currentUnit);
+        const bookmarkIndex = bookmarkedQuestions.findIndex(bq =>
+            bq.id === question.id &&
+            bq.section === currentSection &&
+            bq.subject === currentSubject &&
+            bq.grade === currentGrade && // Add grade to check
+            bq.unit === currentUnit
+        );
 
         if (bookmarkIndex > -1) {
             bookmarkedQuestions.splice(bookmarkIndex, 1); // Unbookmark
@@ -538,12 +610,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: question.text,
                 section: currentSection,
                 subject: currentSubject,
-                unit: currentUnit,
-                // Could store question index within unit if needed for direct navigation
+                grade: currentGrade, // Store grade
+                unit: currentUnit
             }); // Bookmark
         }
         localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
-        updateBookmarkButtonState(question.id);
+        updateBookmarkButtonState(question.id); // Will use the updated currentGrade
     }
 
     if (bookmarkQuestionButton) {
@@ -572,84 +644,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
     applyTheme(savedTheme);
 
-    // --- Search Functionality ---
-    function filterCurrentlyDisplayedList(searchTerm) {
-        searchTerm = searchTerm.toLowerCase();
-        let itemsToFilter;
-        let container;
-
-        if (currentPage === 'section' && subjectListContainer) {
-            itemsToFilter = subjectListContainer.querySelectorAll('.list-item');
-            container = subjectListContainer;
-        } else if (currentPage === 'subject' && unitListContainer) {
-            itemsToFilter = unitListContainer.querySelectorAll('.list-item');
-            container = unitListContainer;
-        } else {
-            // Search is not actively filtering a list on other pages in this simple version
-            return;
-        }
-
-        let foundItems = 0;
-        itemsToFilter.forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(searchTerm)) {
-                item.style.display = ''; // Show item
-                foundItems++;
-            } else {
-                item.style.display = 'none'; // Hide item
-            }
-        });
-
-        // Remove previous "no results" message if any
-        const noResultsMsg = container.querySelector('.no-results-message');
-        if (noResultsMsg) {
-            noResultsMsg.remove();
-        }
-
-        if (foundItems === 0 && searchTerm.length > 0) {
-            const p = document.createElement('p');
-            p.textContent = 'No matching items found.';
-            p.className = 'no-results-message';
-            container.appendChild(p);
-        }
-    }
-
-    if (searchBar) {
-        searchBar.addEventListener('input', (e) => {
-            const searchTerm = e.target.value;
-            // If on a page with lists, filter them.
-            if (currentPage === 'section' || currentPage === 'subject') {
-                filterCurrentlyDisplayedList(searchTerm);
-            }
-            // Future enhancement: Implement global search results display for other pages.
-            // For now, it will only actively filter when on section/subject pages.
-            // If search term is cleared, and on a list page, reload the full list.
-            else if (searchTerm === '' && (currentPage === 'section' || currentPage === 'subject')) {
-                 if (currentPage === 'section') loadSubjects(currentSection);
-                 if (currentPage === 'subject') loadUnits(currentSection, currentSubject);
-            }
-        });
-
-        searchBar.addEventListener('focus', () => {
-            // If search bar is focused and empty, and on a list page, ensure full list is shown
-            if (searchBar.value === '' && (currentPage === 'section' || currentPage === 'subject')) {
-                if (currentPage === 'section' && currentSection) loadSubjects(currentSection);
-                if (currentPage === 'subject' && currentSection && currentSubject) loadUnits(currentSection, currentSubject);
-            }
-        });
-    }
-
     // --- Progress Tracker ---
     function saveUnitProgress() {
-        if (!currentSection || !currentSubject || !currentUnit || !questionsForUnit) return;
+        if (!currentSection || !currentSubject || !currentGrade || !currentUnit || !questionsForUnit) return;
 
         // Initialize structure if not present
         progressData[currentSection] = progressData[currentSection] || { subjects: {} };
-        progressData[currentSection].subjects[currentSubject] = progressData[currentSection].subjects[currentSubject] || { units: {} };
+        progressData[currentSection].subjects[currentSubject] = progressData[currentSection].subjects[currentSubject] || { grades: {} };
+        progressData[currentSection].subjects[currentSubject].grades[currentGrade] = progressData[currentSection].subjects[currentSubject].grades[currentGrade] || { units: {} };
 
-        const unitStats = progressData[currentSection].subjects[currentSubject].units[currentUnit] || { attempted: 0, correct: 0, completedCount: 0, bestScore: 0 };
+        const unitStats = progressData[currentSection].subjects[currentSubject].grades[currentGrade].units[currentUnit] || { attempted: 0, correct: 0, completedCount: 0, bestScore: 0 };
 
-        unitStats.attempted = questionsForUnit.length; // Assumes all questions are attempted when unit is "finished"
+        unitStats.attempted = questionsForUnit.length;
         unitStats.correct = score;
         unitStats.completedCount = (unitStats.completedCount || 0) + 1;
         unitStats.lastAttemptDate = new Date().toISOString();
@@ -657,9 +663,9 @@ document.addEventListener('DOMContentLoaded', () => {
             unitStats.bestScore = score;
         }
 
-        progressData[currentSection].subjects[currentSubject].units[currentUnit] = unitStats;
+        progressData[currentSection].subjects[currentSubject].grades[currentGrade].units[currentUnit] = unitStats;
 
-        // Update overall stats (simple sum for now, could be more complex)
+        // Update overall stats
         let totalAttemptedOverall = 0;
         let totalCorrectOverall = 0;
         let totalUnitsCompleted = 0;
@@ -667,27 +673,30 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const sectionKey in progressData) {
             if (sectionKey === 'overallStats') continue;
             for (const subjectKey in progressData[sectionKey].subjects) {
-                for (const unitKey in progressData[sectionKey].subjects[subjectKey].units) {
-                    const u = progressData[sectionKey].subjects[subjectKey].units[unitKey];
-                    totalAttemptedOverall += u.attempted * u.completedCount; // Or just sum of all questions in completed units
-                    totalCorrectOverall += u.correct; // This sums the score of the latest attempt. Might need refinement if we want sum of all correct answers ever.
-                    if (u.completedCount > 0) totalUnitsCompleted++;
+                for (const gradeKey in progressData[sectionKey].subjects[subjectKey].grades) {
+                    for (const unitKey in progressData[sectionKey].subjects[subjectKey].grades[gradeKey].units) {
+                        const u = progressData[sectionKey].subjects[subjectKey].grades[gradeKey].units[unitKey];
+                        // Consider if totalAttemptedOverall should sum u.attempted or u.attempted * u.completedCount
+                        totalAttemptedOverall += u.attempted; // Summing questions in units completed at least once
+                        totalCorrectOverall += u.bestScore; // Summing best scores for simplicity
+                        if (u.completedCount > 0) totalUnitsCompleted++;
+                    }
                 }
             }
         }
         progressData.overallStats = {
-            totalAttempted: totalAttemptedOverall, // This interpretation might need review based on desired metric
-            totalCorrect: totalCorrectOverall,   // Same as above
-            totalUnitsCompleted: totalUnitsCompleted,
+            totalQuestionsInCompletedUnits: totalAttemptedOverall,
+            totalBestCorrectAnswers: totalCorrectOverall,
+            totalUnitsCompleted: totalUnitsCompleted, // This counts unique units completed at least once
             lastUpdated: new Date().toISOString()
         };
 
         localStorage.setItem('progressData', JSON.stringify(progressData));
         console.log("Progress saved:", progressData);
 
-        // Optionally, refresh unit/subject list to show completion indicators
-        if (currentPage === 'subject') {
-            loadUnits(currentSection, currentSubject);
+        // Optionally, refresh unit list to show completion indicators if on the grade page
+        if (currentPage === 'grade') {
+            loadUnitsForGrade(currentSection, currentSubject, currentGrade);
         }
     }
 
@@ -698,9 +707,9 @@ document.addEventListener('DOMContentLoaded', () => {
         progressContent.innerHTML = '<h3>Overall Statistics</h3>';
         if (progressData.overallStats) {
             progressContent.innerHTML += `
-                <p>Total Questions Attempted in Completed Units: ${progressData.overallStats.totalAttempted || 0}</p>
-                <p>Total Correct Answers in Latest Attempts: ${progressData.overallStats.totalCorrect || 0}</p>
-                <p>Total Units Completed: ${progressData.overallStats.totalUnitsCompleted || 0}</p>
+                <p>Total Questions in Completed Units: ${progressData.overallStats.totalQuestionsInCompletedUnits || 0}</p>
+                <p>Total Sum of Best Scores: ${progressData.overallStats.totalBestCorrectAnswers || 0}</p>
+                <p>Total Unique Units Completed: ${progressData.overallStats.totalUnitsCompleted || 0}</p>
                 <p><em>Last updated: ${progressData.overallStats.lastUpdated ? new Date(progressData.overallStats.lastUpdated).toLocaleString() : 'N/A'}</em></p>
             `;
         } else {
@@ -709,10 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         progressContent.innerHTML += '<h3>Progress by Unit</h3>';
         let hasUnitProgress = false;
-        const ul = document.createElement('ul');
-        ul.style.listStyleType = 'none';
-        ul.style.paddingLeft = '0';
-
+        const mainUl = document.createElement('ul');
+        mainUl.style.listStyleType = 'none';
+        mainUl.style.paddingLeft = '0';
 
         for (const sectionKey in progressData) {
             if (sectionKey === 'overallStats' || !progressData[sectionKey].subjects) continue;
@@ -720,43 +728,58 @@ document.addEventListener('DOMContentLoaded', () => {
             const sectionDiv = document.createElement('div');
             sectionDiv.innerHTML = `<h4>${sectionKey}</h4>`;
             const subjectUl = document.createElement('ul');
-            subjectUl.style.paddingLeft = '20px';
+            subjectUl.style.paddingLeft = '20px'; // Indent subjects
 
             for (const subjectKey in progressData[sectionKey].subjects) {
-                if (!progressData[sectionKey].subjects[subjectKey].units) continue;
+                const subjectData = progressData[sectionKey].subjects[subjectKey];
+                if (!subjectData.grades) continue;
 
                 const subjectLi = document.createElement('li');
                 subjectLi.innerHTML = `<h5>${subjectKey}</h5>`;
-                const unitUl = document.createElement('ul');
-                unitUl.style.paddingLeft = '20px';
+                const gradeUl = document.createElement('ul');
+                gradeUl.style.paddingLeft = '20px'; // Indent grades
 
-                for (const unitKey in progressData[sectionKey].subjects[subjectKey].units) {
-                    hasUnitProgress = true;
-                    const unit = progressData[sectionKey].subjects[subjectKey].units[unitKey];
-                    const unitLi = document.createElement('li');
-                    unitLi.innerHTML = `
-                        <strong>${unitKey}</strong>:
-                        Score: ${unit.correct}/${unit.attempted} (Best: ${unit.bestScore}/${unit.attempted}),
-                        Completed ${unit.completedCount} time(s).
-                        ${unit.lastAttemptDate ? `Last attempt: ${new Date(unit.lastAttemptDate).toLocaleDateString()}` : ''}
-                    `;
-                    unitUl.appendChild(unitLi);
+                for (const gradeKey in subjectData.grades) {
+                    const gradeData = subjectData.grades[gradeKey];
+                    if (!gradeData.units) continue;
+
+                    const gradeLi = document.createElement('li');
+                    gradeLi.innerHTML = `<h6>${gradeKey}</h6>`;
+                    const unitUl = document.createElement('ul');
+                    unitUl.style.paddingLeft = '20px'; // Indent units
+
+                    for (const unitKey in gradeData.units) {
+                        hasUnitProgress = true;
+                        const unit = gradeData.units[unitKey];
+                        const unitLi = document.createElement('li');
+                        unitLi.innerHTML = `
+                            <strong>${unitKey}</strong>:
+                            Score: ${unit.correct}/${unit.attempted} (Best: ${unit.bestScore}/${unit.attempted}),
+                            Completed ${unit.completedCount} time(s).
+                            ${unit.lastAttemptDate ? `Last attempt: ${new Date(unit.lastAttemptDate).toLocaleDateString()}` : ''}
+                        `;
+                        unitUl.appendChild(unitLi);
+                    }
+                    if (unitUl.hasChildNodes()) {
+                        gradeLi.appendChild(unitUl);
+                        gradeUl.appendChild(gradeLi);
+                    }
                 }
-                if (unitUl.hasChildNodes()) {
-                    subjectLi.appendChild(unitUl);
+                if (gradeUl.hasChildNodes()) {
+                    subjectLi.appendChild(gradeUl);
                     subjectUl.appendChild(subjectLi);
                 }
             }
             if (subjectUl.hasChildNodes()) {
                 sectionDiv.appendChild(subjectUl);
-                ul.appendChild(sectionDiv);
+                mainUl.appendChild(sectionDiv);
             }
         }
 
         if (!hasUnitProgress) {
-            ul.innerHTML = '<li>No specific unit progress tracked yet. Complete some units!</li>';
+            mainUl.innerHTML = '<li>No specific unit progress tracked yet. Complete some units!</li>';
         }
-        progressContent.appendChild(ul);
+        progressContent.appendChild(mainUl);
     }
 
     // Modify navigateTo to call displayProgress, manage timer, and call displayReview
@@ -840,22 +863,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Modify loadUnits to display completion indicators
-    const originalLoadUnits = loadUnits;
-    loadUnits = function(section, subjectName) {
-        originalLoadUnits(section, subjectName); // Call original to populate units
+    // Modify loadUnitsForGrade to display completion indicators
+    const originalLoadUnitsForGrade = loadUnitsForGrade;
+    loadUnitsForGrade = function(section, subjectName, gradeName) {
+        originalLoadUnitsForGrade(section, subjectName, gradeName); // Call original to populate units
 
-        // Now, iterate over the newly created unit items and add indicators
-        const unitItems = unitListContainer.querySelectorAll('.list-item');
+        if (!unitListContainerForGrade) return; // Guard against missing container
+        const unitItems = unitListContainerForGrade.querySelectorAll('.list-item');
         unitItems.forEach(item => {
-            const unitName = item.dataset.unitName; // We stored this earlier
-            if (progressData[section]?.subjects[subjectName]?.units[unitName]?.completedCount > 0) {
+            const unitName = item.dataset.unitName;
+            if (progressData[section]?.subjects[subjectName]?.grades[gradeName]?.units[unitName]?.completedCount > 0) {
                 let indicator = item.querySelector('.completion-indicator');
                 if (!indicator) {
                     indicator = document.createElement('span');
                     indicator.className = 'completion-indicator';
-                    indicator.textContent = ' ✔️'; // Simple checkmark
-                    indicator.title = `Completed ${progressData[section].subjects[subjectName].units[unitName].completedCount} time(s). Best: ${progressData[section].subjects[subjectName].units[unitName].bestScore}/${progressData[section].subjects[subjectName].units[unitName].attempted}`;
+                    indicator.textContent = ' ✔️';
+                    indicator.title = `Completed ${progressData[section].subjects[subjectName].grades[gradeName].units[unitName].completedCount} time(s). Best: ${progressData[section].subjects[subjectName].grades[gradeName].units[unitName].bestScore}/${progressData[section].subjects[subjectName].grades[gradeName].units[unitName].attempted}`;
                     item.appendChild(indicator);
                 }
             }
@@ -883,7 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = 'bookmark-item';
             li.innerHTML = `
                 <div class="bookmark-text">
-                    <p><strong>${bookmark.subject} - ${bookmark.unit}</strong></p>
+                    <p><strong>${bookmark.subject} - ${bookmark.grade} - ${bookmark.unit}</strong></p>
                     <p>${bookmark.text.substring(0, 100)}${bookmark.text.length > 100 ? '...' : ''}</p>
                 </div>
                 <div class="bookmark-actions">
@@ -901,34 +924,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const bookmarkIndex = parseInt(e.target.dataset.bookmarkIndex);
                 const bookmark = bookmarkedQuestions[bookmarkIndex];
                 if (bookmark) {
-                    // Need to find the specific question index within its unit
-                    const questionsInUnit = window.examData[bookmark.section]?.subjects[bookmark.subject]?.units[bookmark.unit];
-                    let questionIdxInUnit = -1;
-                    if (questionsInUnit) {
-                        questionIdxInUnit = questionsInUnit.findIndex(q => q.id === bookmark.id);
-                    }
-
+                    // The loadQuestions function is already set up to handle targetQuestionId
+                    // when navigating to the 'question' page.
+                    // We just need to ensure all context, including gradeName, is passed.
                     navigateTo('question', {
                         sectionType: bookmark.section,
                         subjectName: bookmark.subject,
-                        unitName: bookmark.unit
-                        // We'll also need to make loadQuestions potentially jump to a specific question index
+                        gradeName: bookmark.grade, // Pass the stored grade
+                        unitName: bookmark.unit,
+                        targetQuestionId: bookmark.id
                     });
-                    // Post-navigation: jump to the question if questionIdxInUnit is valid
-                    // This requires loadQuestions/displayQuestion to handle an optional target question ID/index.
-                    // For now, it navigates to the unit. Fine-tuning jump can be an enhancement.
-                    // Let's try to make it jump:
-                    if (questionIdxInUnit !== -1) {
-                        // This needs to be handled after questionsForUnit is loaded by navigateTo's call to loadQuestions
-                        // We can pass it in context, and loadQuestions can use it.
-                        // Modifying navigateTo and loadQuestions for this:
-                        navigateTo('question', {
-                            sectionType: bookmark.section,
-                            subjectName: bookmark.subject,
-                            unitName: bookmark.unit,
-                            targetQuestionId: bookmark.id // Pass target ID
-                        });
-                    }
                 }
             });
         });

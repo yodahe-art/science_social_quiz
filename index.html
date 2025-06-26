@@ -12,7 +12,6 @@
             <button id="back-button" style="display: none;">&larr; Back</button>
             <h1>QESEM EXAM PREP</h1>
             <div class="nav-controls">
-                <input type="text" id="search-bar" placeholder="Search...">
                 <button id="theme-toggle">Toggle Theme</button>
             </div>
         </nav>
@@ -41,10 +40,17 @@
             </div>
         </section>
 
-        <section id="subject-page" class="page">
-            <h2 id="subject-title"></h2>
-            <div id="unit-list" class="list-container">
-                <!-- Units will be listed here -->
+        <section id="subject-page" class="page"> <!-- This page will now list GRADES for a subject -->
+            <h2 id="subject-page-title"></h2>
+            <div id="grade-list" class="list-container">
+                <!-- Grades (e.g., Grade 9, Grade 10) will be listed here -->
+            </div>
+        </section>
+
+        <section id="grade-page" class="page"> <!-- This is a NEW page to list UNITS for a grade -->
+            <h2 id="grade-page-title"></h2>
+            <div id="unit-list-for-grade" class="list-container">
+                <!-- Units for the selected grade will be listed here -->
             </div>
         </section>
 
