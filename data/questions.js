@@ -107,7 +107,363 @@ window.examData = {
             },
             "Mathematics": {
                 "grades": {
-                    "Grade 9": {"units": {"Unit 1: Basic Algebra (G9)": []}},
+                    "Grade 9": {
+                        "units": {
+                            "Unit 1: Basic Algebra (G9)": [], // Kept existing placeholder or can be removed if "Fundamentals of Sets" is the true Unit 1
+                            "Unit 1: Fundamentals of Sets": [
+                                {
+                                    "id": "math_g9_set_001",
+                                    "text": "What is a well-defined set?",
+                                    "options": ["A collection of anything", "A collection of objects that can be clearly identified", "A collection of random items", "A collection that must contain at least one element"],
+                                    "answer": 1,
+                                    "explanation": "A well-defined set has clear criteria for membership — we can determine unambiguously whether an object belongs to it or not."
+                                },
+                                {
+                                    "id": "math_g9_set_002",
+                                    "text": "Which of the following is a proper subset of the set {1, 2, 3}?",
+                                    "options": ["{1, 2, 3}", "{1, 2}", "{4}", "{1, 2, 3, 4}"],
+                                    "answer": 1,
+                                    "explanation": "A proper subset contains some but not all elements of the original set. Option B has only two of the three elements from {1, 2, 3}, so it is a proper subset."
+                                },
+                                {
+                                    "id": "math_g9_set_003",
+                                    "text": "If A = {x | x is a natural number less than 5}, then A is:",
+                                    "options": ["{0, 1, 2, 3, 4}", "{1, 2, 3, 4}", "{1, 2, 3, 4, 5}", "{1, 2, 3, 4, 5, 6}"],
+                                    "answer": 1,
+                                    "explanation": "Natural numbers typically start from 1 (not 0). So, natural numbers less than 5 are: 1, 2, 3, 4."
+                                },
+                                {
+                                    "id": "math_g9_set_004",
+                                    "text": "The union of the sets {1, 2, 3} and {3, 4, 5} is:",
+                                    "options": ["{1, 2, 3, 4, 5}", "{3}", "{1, 2}", "{1, 2, 3, 3, 4, 5}"],
+                                    "answer": 0,
+                                    "explanation": "Union combines all elements from both sets without repetition. So {1, 2, 3} ∪ {3, 4, 5} = {1, 2, 3, 4, 5}"
+                                },
+                                {
+                                    "id": "math_g9_set_005",
+                                    "text": "If A = {2, 4, 6} and B = {4, 5, 6}, what is A ∩ B?",
+                                    "options": ["{2, 4}", "{4, 6}", "{6}", "{4}"],
+                                    "answer": 1,
+                                    "explanation": "Intersection includes only the common elements between the two sets. In this case, 4 and 6 are in both A and B."
+                                },
+                                {
+                                    "id": "math_g9_set_006",
+                                    "text": "The absolute complement of the set A = {1, 2, 3} in the universal set U = {1, 2, 3, 4, 5} is:",
+                                    "options": ["{1, 2, 3}", "{4, 5}", "{1, 2, 3, 4, 5}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "The complement of A in U is the set of all elements in U that are not in A → {4, 5}"
+                                },
+                                {
+                                    "id": "math_g9_set_007",
+                                    "text": "Which of the following represents a finite set?",
+                                    "options": ["The set of all integers", "The set of all natural numbers", "The set of months in a year", "The set of all real numbers"],
+                                    "answer": 2,
+                                    "explanation": "Months in a year are countable and limited (only 12), making it a finite set."
+                                },
+                                {
+                                    "id": "math_g9_set_008",
+                                    "text": "In set theory, if A = {x | x is an even number}, then which of the following is NOT a member of A?",
+                                    "options": ["2", "4", "5", "6"],
+                                    "answer": 2,
+                                    "explanation": "Only even numbers belong to A. Since 5 is odd, it's not in A."
+                                },
+                                {
+                                    "id": "math_g9_set_009",
+                                    "text": "The power set of {a, b} contains how many elements?",
+                                    "options": ["2", "4", "8", "16"],
+                                    "answer": 1,
+                                    "explanation": "Power set = set of all subsets. For a set with n elements, power set has 2^n elements. Here, n = 2 → 2^2 = 4"
+                                },
+                                {
+                                    "id": "math_g9_set_010",
+                                    "text": "If the set A has 3 elements, how many subsets does it have?",
+                                    "options": ["3", "6", "8", "12"],
+                                    "answer": 2,
+                                    "explanation": "Number of subsets = 2^n, where n is the number of elements in the set. 2^3 = 8"
+                                },
+                                {
+                                    "id": "math_g9_set_011",
+                                    "text": "Which of the following is an example of a well-defined set?",
+                                    "options": ["The set of all beautiful people", "The set of all students in a classroom", "The set of all tall buildings", "The set of all colors"],
+                                    "answer": 1,
+                                    "explanation": "\"Students in a classroom\" is clearly defined — you can objectively identify who belongs. Other options like \"beautiful\" or \"tall\" are subjective."
+                                },
+                                {
+                                    "id": "math_g9_set_012",
+                                    "text": "The set {x | x is a vowel in the English alphabet} is:",
+                                    "options": ["Well-defined", "Not well-defined", "Finite", "Infinite"],
+                                    "answer": 0, // Assuming question means "Which property best describes..." A is primary. C is also true.
+                                    "explanation": "There are exactly 5 vowels in English: a, e, i, o, u. Membership is clearly defined."
+                                },
+                                {
+                                    "id": "math_g9_set_013",
+                                    "text": "The intersection of {1, 2, 3} and {2, 3, 4} is:",
+                                    "options": ["{1, 2, 3, 4}", "{2, 3}", "{1}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Common elements in both sets: 2 and 3."
+                                },
+                                {
+                                    "id": "math_g9_set_014",
+                                    "text": "Which of the following sets is empty?",
+                                    "options": ["{}", "{0}", "{a, b, c}", "{x | x is an even prime number greater than 2}"],
+                                    "answer": 3, // Both A and D are empty. Assuming D is the intended answer for concept.
+                                    "explanation": "2 is the only even prime number. There are no even primes > 2, so this set is empty. {} also represents the empty set."
+                                },
+                                {
+                                    "id": "math_g9_set_015",
+                                    "text": "If A = {1, 2, 3} and B = {1, 3, 4}, what is A ∪ B?",
+                                    "options": ["{1, 2, 3, 4}", "{1, 3}", "{2, 4}", "{1, 2}"],
+                                    "answer": 0,
+                                    "explanation": "Union combines all unique elements from both sets: {1, 2, 3, 4}"
+                                },
+                                {
+                                    "id": "math_g9_set_016",
+                                    "text": "The symmetric difference of two sets A and B is defined as:",
+                                    "options": ["A ∩ B", "A ∪ B", "(A - B) ∪ (B - A)", "(A ∩ B) - (A ∪ B)"],
+                                    "answer": 2,
+                                    "explanation": "Symmetric difference includes elements that are in either A or B, but not in both."
+                                },
+                                {
+                                    "id": "math_g9_set_017",
+                                    "text": "If A = {1, 2, 3} and B = {3, 4, 5}, what is A - B?",
+                                    "options": ["{1, 2}", "{3, 4, 5}", "{1, 2, 3, 4, 5}", "{}"],
+                                    "answer": 0,
+                                    "explanation": "Set difference A - B means elements in A that are not in B → {1, 2}"
+                                },
+                                {
+                                    "id": "math_g9_set_018",
+                                    "text": "The number of elements in the power set of a set with n elements is:",
+                                    "options": ["n", "2^n", "n^2", "n!"],
+                                    "answer": 1,
+                                    "explanation": "Power set = all subsets. Number of subsets = 2^n"
+                                },
+                                {
+                                    "id": "math_g9_set_019",
+                                    "text": "The complement of the set A = {2, 4} in the universal set U = {1, 2, 3, 4, 5} is:",
+                                    "options": ["{1, 2, 3, 4}", "{1, 3, 5}", "{2, 4}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Elements in U but not in A → {1, 3, 5}"
+                                },
+                                {
+                                    "id": "math_g9_set_020",
+                                    "text": "If the set A = {x | x is a prime number}, which of the following is NOT in A?",
+                                    "options": ["2", "3", "4", "5"],
+                                    "answer": 2,
+                                    "explanation": "4 is not a prime number because it has more than two divisors (1, 2, 4)"
+                                },
+                                {
+                                    "id": "math_g9_set_021",
+                                    "text": "If two sets A and B are equal, then:",
+                                    "options": ["A ∩ B = A", "A ∪ B = A", "A - B = B", "A = B"],
+                                    "answer": 3, // D. A=B implies A, B, and (A U B = A) and (A int B = A) are all true.
+                                    "explanation": "This is just restating the definition of equality. If A=B, then A ∩ B = A and A ∪ B = A are also true."
+                                },
+                                {
+                                    "id": "math_g9_set_022",
+                                    "text": "The set of natural numbers is denoted by:",
+                                    "options": ["ℕ", "ℤ", "ℚ", "ℝ"],
+                                    "answer": 0,
+                                    "explanation": "ℕ is standard notation for natural numbers."
+                                },
+                                {
+                                    "id": "math_g9_set_023",
+                                    "text": "The complement of the empty set is:",
+                                    "options": ["The universal set", "The empty set", "None", "Undefined"],
+                                    "answer": 0,
+                                    "explanation": "All elements not in the empty set are in the universal set."
+                                },
+                                {
+                                    "id": "math_g9_set_024",
+                                    "text": "If A = {1, 2, 3} and B = {2, 3, 4}, what is A ∩ B?",
+                                    "options": ["{1}", "{2, 3}", "{4}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Common elements in both sets: {2, 3}"
+                                },
+                                {
+                                    "id": "math_g9_set_025",
+                                    "text": "For a set A = {1, 2, 3, 4}, what is the number of subsets of A?",
+                                    "options": ["4", "8", "16", "2"],
+                                    "answer": 2,
+                                    "explanation": "Number of subsets = 2^n. Here, n = 4 → 2^4 = 16"
+                                },
+                                {
+                                    "id": "math_g9_set_026",
+                                    "text": "The statement \"A is a subset of B\" means:",
+                                    "options": ["All elements of B are in A", "All elements of A are in B", "A and B are equal", "A is empty"],
+                                    "answer": 1,
+                                    "explanation": "Subset means every element of A is also in B."
+                                },
+                                {
+                                    "id": "math_g9_set_027",
+                                    "text": "The difference between two sets A and B is denoted as:",
+                                    "options": ["A ∩ B", "A ∪ B", "A - B", "A + B"],
+                                    "answer": 2,
+                                    "explanation": "Standard notation for set difference is A - B"
+                                },
+                                {
+                                    "id": "math_g9_set_028",
+                                    "text": "If A = {1, 2} and B = {1, 2, 3}, what is A ⊆ B?",
+                                    "options": ["True", "False", "Cannot be determined", "None of the above"],
+                                    "answer": 0,
+                                    "explanation": "Every element of A is in B → A is a subset of B."
+                                },
+                                {
+                                    "id": "math_g9_set_029",
+                                    "text": "The notation |A| represents:",
+                                    "options": ["The union of A", "The intersection of A", "The number of elements in set A", "The complement of A"],
+                                    "answer": 2,
+                                    "explanation": "|A| denotes the cardinality (number of elements) of set A."
+                                },
+                                {
+                                    "id": "math_g9_set_030",
+                                    "text": "If A = {x | x is a positive integer} and B = {x | x is even}, what is A ∩ B?",
+                                    "options": ["All positive integers", "All odd integers", "All even positive integers", "Empty set"],
+                                    "answer": 2,
+                                    "explanation": "Positive integers include both even and odd numbers. Intersection gives only those that are both positive and even."
+                                },
+                                {
+                                    "id": "math_g9_set_031",
+                                    "text": "The symmetric difference of sets A and B is given by:",
+                                    "options": ["A ∩ B", "A ∪ B", "(A - B) ∪ (B - A)", "(A ∩ B) - (A ∪ B)"],
+                                    "answer": 2,
+                                    "explanation": "Definition of symmetric difference."
+                                },
+                                {
+                                    "id": "math_g9_set_032",
+                                    "text": "If A = {2, 4, 6} and B = {4, 6, 8}, what is A ∪ B?",
+                                    "options": ["{4, 6}", "{2, 4, 6, 8}", "{2, 4, 6}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Combine all unique elements from both sets."
+                                },
+                                {
+                                    "id": "math_g9_set_033",
+                                    "text": "The number of subsets of a set with n elements is:",
+                                    "options": ["n!", "2^n", "n^2", "n + 1"],
+                                    "answer": 1,
+                                    "explanation": "Total subsets = 2^n"
+                                },
+                                {
+                                    "id": "math_g9_set_034",
+                                    "text": "If A = {1, 2, 3}, what is the power set of A?",
+                                    "options": ["{1, 2, 3}", "{{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}}", "{1, 2, 3, 4}", "None of the above"],
+                                    "answer": 1,
+                                    "explanation": "Power set includes all possible subsets."
+                                },
+                                {
+                                    "id": "math_g9_set_035",
+                                    "text": "The empty set is a subset of:",
+                                    "options": ["Only itself", "All sets", "No sets", "Only infinite sets"],
+                                    "answer": 1,
+                                    "explanation": "Empty set is a subset of every set."
+                                },
+                                {
+                                    "id": "math_g9_set_036",
+                                    "text": "If A = {1, 2, 3} and B = {3, 4, 5}, what is A ∩ B?",
+                                    "options": ["{1, 2}", "{3}", "{4, 5}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Only common element is 3."
+                                },
+                                {
+                                    "id": "math_g9_set_037",
+                                    "text": "The difference between the sets A and B is represented by:",
+                                    "options": ["A ∩ B", "A ∪ B", "A - B", "A + B"],
+                                    "answer": 2,
+                                    "explanation": "Standard notation."
+                                },
+                                {
+                                    "id": "math_g9_set_038",
+                                    "text": "If A = {x | x is a prime number}, which of the following is NOT in A?",
+                                    "options": ["2", "3", "4", "5"],
+                                    "answer": 2,
+                                    "explanation": "4 is not a prime number."
+                                },
+                                {
+                                    "id": "math_g9_set_039",
+                                    "text": "The notation A' represents:",
+                                    "options": ["The intersection of A", "The union of A", "The absolute complement of A", "The symmetric difference of A"],
+                                    "answer": 2,
+                                    "explanation": "A’ usually denotes the complement of A."
+                                },
+                                {
+                                    "id": "math_g9_set_040",
+                                    "text": "If A has 5 elements, how many subsets does it have?",
+                                    "options": ["5", "10", "32", "64"],
+                                    "answer": 2,
+                                    "explanation": "2^5 = 32"
+                                },
+                                {
+                                    "id": "math_g9_set_041",
+                                    "text": "The universal set U contains the elements {1, 2, 3, 4, 5}. What is the complement of A = {2, 4}?",
+                                    "options": ["{1, 2, 3, 4, 5}", "{1, 3, 5}", "{2, 4}", "{}"],
+                                    "answer": 1,
+                                    "explanation": "Elements in U not in A → {1, 3, 5}"
+                                },
+                                {
+                                    "id": "math_g9_set_042",
+                                    "text": "If A = {1, 2, 3, 4} and B = {2, 3}, which statement is true?",
+                                    "options": ["B ⊆ A", "A ⊆ B", "A ∩ B = {}", "A ∪ B = {1, 2, 3, 4}"],
+                                    "answer": 0, // B is a subset of A. D is also true, but A is more specific to subset relation.
+                                    "explanation": "All elements of B are in A → B is a subset of A."
+                                },
+                                {
+                                    "id": "math_g9_set_043",
+                                    "text": "The intersection of two disjoint sets A and B is:",
+                                    "options": ["A", "B", "Empty set", "A ∪ B"],
+                                    "answer": 2,
+                                    "explanation": "Disjoint sets share no elements → their intersection is empty."
+                                },
+                                {
+                                    "id": "math_g9_set_044",
+                                    "text": "The cardinality of a set refers to:",
+                                    "options": ["The number of elements in the set", "The type of elements in the set", "The order of elements in the set", "None of the above"],
+                                    "answer": 0,
+                                    "explanation": "Cardinality = size of the set."
+                                },
+                                {
+                                    "id": "math_g9_set_045",
+                                    "text": "A set is defined as finite if:",
+                                    "options": ["It has no elements", "It has a limited number of elements", "It has an infinite number of elements", "It is empty"],
+                                    "answer": 1,
+                                    "explanation": "Finite set has a definite, limited number of elements."
+                                },
+                                {
+                                    "id": "math_g9_set_046",
+                                    "text": "If A = {x | x is a multiple of 3}, which of the following is an element of A?",
+                                    "options": ["2", "4", "9", "5"],
+                                    "answer": 2,
+                                    "explanation": "9 is divisible by 3 → belongs to A."
+                                },
+                                {
+                                    "id": "math_g9_set_047",
+                                    "text": "If A = {1, 2, 3} and B = {3, 4, 5}, what is A ∪ B?",
+                                    "options": ["{1, 2}", "{3}", "{1, 2, 3, 4, 5}", "{}"],
+                                    "answer": 2,
+                                    "explanation": "Union includes all unique elements from both sets."
+                                },
+                                {
+                                    "id": "math_g9_set_048",
+                                    "text": "The number of elements in the power set of a set with n elements is:",
+                                    "options": ["2^n", "n^2", "n + 1", "n!"],
+                                    "answer": 0,
+                                    "explanation": "As before, total subsets = 2^n"
+                                },
+                                {
+                                    "id": "math_g9_set_049",
+                                    "text": "If A and B are equal sets, then:",
+                                    "options": ["A ∩ B = A", "A ∪ B = A", "A - B = B", "A = B"],
+                                    "answer": 3, // D. A=B implies A, B, and (A U B = A) and (A int B = A) are all true.
+                                    "explanation": "Equality implies they are the same set."
+                                },
+                                {
+                                    "id": "math_g9_set_050",
+                                    "text": "The union of two sets A and B is denoted by:",
+                                    "options": ["A ∩ B", "A ∪ B", "A - B", "A + B"],
+                                    "answer": 1,
+                                    "explanation": "Standard notation for union is A ∪ B."
+                                }
+                            ]
+                        }
+                    },
                     "Grade 10": {"units": {"Unit 1: Geometry (G10)": []}},
                     "Grade 11": {"units": {"Unit 1: Functions (G11)": []}},
                     "Grade 12": {
