@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentSubject = context.subjectName;
             currentGrade = context.gradeName;
             currentUnit = context.unitName;
+            console.log("[navigateTo for question] context.unitName:", context.unitName, "currentUnit set to:", currentUnit); // DEBUG
             loadQuestions(currentSection, currentSubject, currentGrade, context.unitName, context.targetQuestionId);
         }
     }
@@ -268,8 +269,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modified loadQuestions to include grade
     function loadQuestions(section, subject, grade, unit, targetQuestionId = null) { // Added targetQuestionId from bookmark jump
-        console.log(`Loading questions for: ${unit} of ${grade}, ${subject} (${section})`);
+        console.log(`[loadQuestions] Received params: section='${section}', subject='${subject}', grade='${grade}', unit='${unit}', targetId='${targetQuestionId}'`); // DEBUG
+
+        if (!unit) {
+            console.error("[loadQuestions] Error: 'unit' parameter is undefined or null.");
+            unitTitle.textContent = `${subject} - ${grade} - ERROR_UNIT_UNDEFINED`;
+            questionContainer.innerHTML = '<p>Error: Unit information is missing. Cannot load questions.</p>';
+            submitAnswerButton.style.display = 'none';
+            bookmarkQuestionButton.style.display = 'none';
+            stopTimer();
+            return;
+        }
+
         unitTitle.textContent = `${subject} - ${grade} - ${unit}`;
+        console.log(`[loadQuestions] Set unitTitle.textContent to: "${unitTitle.textContent}"`); // DEBUG
 
         currentQuestionIndex = 0;
         userAnswers = [];
@@ -948,19 +961,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modify loadQuestions to handle targetQuestionId
-    const originalLoadQuestions = loadQuestions;
-    loadQuestions = function(section, subject, unit, targetQuestionId = null) {
-        originalLoadQuestions(section, subject, unit); // This sets up questionsForUnit
-
-        if (targetQuestionId && questionsForUnit && questionsForUnit.length > 0) {
-            const targetIndex = questionsForUnit.findIndex(q => q.id === targetQuestionId);
-            if (targetIndex !== -1) {
-                currentQuestionIndex = targetIndex;
-                displayQuestion(currentQuestionIndex); // Display the specific bookmarked question
-            }
-        }
-    };
+    // The main loadQuestions function defined earlier already handles targetQuestionId.
+    // The faulty wrapper that was here has been removed.
 
 
     // Initial setup
