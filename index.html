@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QESEM EXAM PREP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav id="sticky-nav">
+            <button id="back-button" style="display: none;">&larr; Back</button>
+            <h1>QESEM EXAM PREP</h1>
+            <div class="nav-controls">
+                <input type="text" id="search-bar" placeholder="Search...">
+                <button id="theme-toggle">Toggle Theme</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="landing-page" class="page current-page">
+            <h2>Welcome to QESEM Exam Prep!</h2>
+            <p>Your journey to exam success starts here.</p>
+            <div class="section-cards">
+                <div class="card" id="natural-science-card">
+                    <img src="assets/images/natural_science_icon.png" alt="Natural Science Icon" class="card-icon">
+                    <h3>Natural Science</h3>
+                </div>
+                <div class="card" id="social-science-card">
+                    <img src="assets/images/social_science_icon.png" alt="Social Science Icon" class="card-icon">
+                    <h3>Social Science</h3>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-page" class="page">
+            <h2 id="section-title"></h2>
+            <div id="subject-list" class="list-container">
+                <!-- Subjects will be listed here -->
+            </div>
+        </section>
+
+        <section id="subject-page" class="page">
+            <h2 id="subject-title"></h2>
+            <div id="unit-list" class="list-container">
+                <!-- Units will be listed here -->
+            </div>
+        </section>
+
+        <section id="question-page" class="page">
+            <h2 id="unit-title"></h2>
+            <div id="timer-container">Time remaining: <span id="timer">00:00</span></div>
+            <div id="question-container">
+                <!-- Question will be displayed here -->
+            </div>
+            <div id="explanation-container" style="display: none;">
+                <h4>Explanation:</h4>
+                <p id="explanation-text"></p>
+            </div>
+            <button id="submit-answer" style="display: none;">Submit Answer</button>
+            <button id="next-question" style="display: none;">Next Question</button>
+            <button id="review-answers" style="display: none;">Review Answers</button>
+            <button id="bookmark-question" style="display: none;">Bookmark Question</button>
+        </section>
+
+        <section id="review-page" class="page">
+            <h2>Review Answers</h2>
+            <div id="review-content">
+                <!-- Review content will be displayed here -->
+            </div>
+        </section>
+
+        <section id="progress-tracker" class="page">
+            <h2>Your Progress</h2>
+            <div id="progress-content">
+                <!-- Progress will be displayed here -->
+            </div>
+        </section>
+
+        <section id="bookmarks-page" class="page">
+            <h2>Bookmarked Questions</h2>
+            <div id="bookmarks-content-list">
+                <!-- Bookmarked questions will be listed here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 QESEM EXAM PREP. All rights reserved.</p>
+    </footer>
+
+    <script src="data/questions.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

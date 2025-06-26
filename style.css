@@ -1,0 +1,443 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Theme Variables */
+:root {
+    --primary-color-light: #007bff;
+    --secondary-color-light: #6c757d;
+    --background-color-light: #f8f9fa;
+    --text-color-light: #212529;
+    --card-bg-light: #ffffff;
+    --border-color-light: #dee2e6;
+
+    --primary-color-dark: #00aeff;
+    --secondary-color-dark: #adb5bd;
+    --background-color-dark: #1a1a1a;
+    --text-color-dark: #f8f9fa;
+    --card-bg-dark: #2c2c2c;
+    --border-color-dark: #444444;
+}
+
+/* Light Theme (default) */
+body {
+    background-color: var(--background-color-light);
+    color: var(--text-color-light);
+}
+
+#sticky-nav {
+    background-color: var(--primary-color-light);
+    color: var(--card-bg-light);
+}
+
+.card {
+    background-color: var(--card-bg-light);
+    border: 1px solid var(--border-color-light);
+    color: var(--text-color-light);
+}
+
+/* Dark Theme */
+body.dark-mode {
+    background-color: var(--background-color-dark);
+    color: var(--text-color-dark);
+}
+
+body.dark-mode #sticky-nav {
+    background-color: var(--primary-color-dark);
+    color: var(--card-bg-dark);
+}
+
+body.dark-mode .card {
+    background-color: var(--card-bg-dark);
+    border: 1px solid var(--border-color-dark);
+    color: var(--text-color-dark);
+}
+
+body.dark-mode button {
+    background-color: var(--secondary-color-dark);
+    color: var(--text-color-dark);
+    border: 1px solid var(--border-color-dark);
+}
+body.dark-mode input[type="text"] {
+    background-color: var(--card-bg-dark);
+    color: var(--text-color-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+
+/* Header and Navigation */
+#sticky-nav {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#sticky-nav h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+}
+
+#search-bar {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+
+#theme-toggle, #back-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color-light);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#theme-toggle:hover, #back-button:hover {
+    opacity: 0.9;
+}
+
+/* Main Content */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.page {
+    display: none; /* Initially hide all pages */
+    animation: pageFadeIn 0.5s ease-in-out;
+}
+
+.current-page {
+    display: block; /* Show only the current page */
+}
+
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Landing Page Specific Styles */
+#landing-page h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: var(--primary-color-light);
+}
+body.dark-mode #landing-page h2 {
+    color: var(--primary-color-dark);
+}
+
+
+#landing-page p {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.section-cards {
+    display: flex;
+    justify-content: space-around;
+    gap: 2rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.card {
+    width: 300px; /* Fixed width for cards */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    width: 80px; /* Adjust as needed */
+    height: 80px; /* Adjust as needed */
+    margin-bottom: 1rem;
+    /* Placeholder style if images are not found */
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color-light);
+}
+body.dark-mode footer {
+    border-top: 1px solid var(--border-color-dark);
+}
+
+
+/* List Containers for Subjects/Units */
+.list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.list-item {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color-light);
+    body.dark-mode & { /* TODO: Check if this nesting works or needs to be separate */
+        border: 1px solid var(--border-color-dark);
+    }
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+
+.list-item:hover {
+    background-color: var(--primary-color-light);
+    color: white;
+}
+body.dark-mode .list-item:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Question Page */
+#question-container {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color-light);
+    body.dark-mode & {
+        border: 1px solid var(--border-color-dark);
+    }
+    border-radius: 6px;
+}
+
+#question-container p { /* Question text */
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.options-list {
+    list-style: none;
+    padding: 0;
+}
+
+.options-list li {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color-light);
+    body.dark-mode & {
+        border: 1px solid var(--border-color-dark);
+    }
+    border-radius: 4px;
+    cursor: pointer;
+}
+.options-list li:hover {
+    background-color: #e9ecef; /* Light grey hover */
+}
+body.dark-mode .options-list li:hover {
+    background-color: #3a3a3a;
+}
+.options-list li.selected {
+    background-color: var(--primary-color-light) !important;
+    color: white !important;
+}
+body.dark-mode .options-list li.selected {
+    background-color: var(--primary-color-dark) !important;
+}
+
+
+.options-list li.correct {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+    border-color: #28a745 !important;
+}
+
+.options-list li.incorrect {
+    background-color: #dc3545 !important; /* Red */
+    color: white !important;
+    border-color: #dc3545 !important;
+    animation: shakeIncorrect 0.5s ease-in-out;
+}
+
+.options-list li.correct {
+    /* Correct answers already have a green background by default */
+    animation: pulseCorrect 0.5s ease-in-out;
+}
+
+@keyframes shakeIncorrect {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+}
+
+@keyframes pulseCorrect {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+
+#explanation-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #e9ecef;
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+}
+body.dark-mode #explanation-container {
+    background-color: #3a3a3a;
+    border: 1px solid var(--border-color-dark);
+}
+
+#timer-container {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Buttons */
+button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem; /* Spacing between buttons */
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+#submit-answer, #next-question, #review-answers, #bookmark-question {
+    background-color: var(--primary-color-light);
+    color: white;
+    margin-top: 1rem;
+}
+body.dark-mode #submit-answer, body.dark-mode #next-question, body.dark-mode #review-answers, body.dark-mode #bookmark-question {
+    background-color: var(--primary-color-dark);
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #sticky-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .nav-controls {
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    #search-bar {
+        flex-grow: 1; /* Allow search bar to take more space */
+    }
+    .section-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        width: 90%; /* Make cards wider on small screens */
+        max-width: 350px;
+    }
+    main {
+        padding: 1rem;
+    }
+    h1, h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #sticky-nav h1 {
+        font-size: 1.2rem;
+    }
+    button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+    .card h3 {
+        font-size: 1.3rem;
+    }
+    #landing-page h2 {
+        font-size: 1.6rem;
+    }
+    .list-container { /* For subject/unit lists */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Smaller base for very small screens */
+        gap: 1rem;
+    }
+    .list-item {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+    #question-container p { /* Question text */
+        font-size: 1.1rem;
+    }
+    .options-list li {
+        padding: 0.65rem;
+        font-size: 0.9rem;
+    }
+    #timer-container {
+        font-size: 1rem;
+    }
+    /* Ensure progress page also has some responsive text */
+    #progress-content h3, #progress-content h4, #progress-content h5 {
+        font-size: 1.2rem; /* Adjust down slightly */
+    }
+    #progress-content p, #progress-content li {
+        font-size: 0.9rem;
+    }
+}
+
+/* Utility class for hiding elements via JS */
+.hidden {
+    display: none !important;
+}
+
+/* Completion indicator style */
+.completion-indicator {
+    font-size: 0.8em; /* Smaller than the item text */
+    margin-left: 5px;
+    color: green; /* Or use a theme variable */
+    cursor: default; /* Remove text cursor */
+}
+body.dark-mode .completion-indicator {
+    color: lightgreen;
+}
